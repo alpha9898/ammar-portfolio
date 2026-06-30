@@ -1,0 +1,76 @@
+/* Imported in app/layout.tsx */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap");
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --void:   #03050A;
+  --pulse:  #00FFD1;
+  --ember:  #FF4D6D;
+  --gold:   #FFD166;
+  --violet: #9B6DFF;
+  --dim:    rgba(255,255,255,0.07);
+  --glass:  rgba(0,255,209,0.05);
+  --border: rgba(0,255,209,0.09);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: #E8EDF7;
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hide custom cursor on touch */
+@media (pointer: coarse) {
+  #cursor, #cursor-ring { display: none; }
+  body { cursor: auto; }
+}
+@media (pointer: fine) {
+  body { cursor: none; }
+}
+
+/* ── Shared section ── */
+.section {
+  position: relative; z-index: 10;
+  padding: 6rem 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media (min-width: 768px) { .section { padding: 8rem 2rem; } }
+
+.section-label {
+  font-family: "Space Mono", monospace;
+  font-size: 0.68rem; letter-spacing: 0.3em;
+  color: var(--pulse); margin-bottom: 1rem; opacity: 0.7;
+}
+.section-headline {
+  font-size: clamp(1.8rem, 6vw, 3.5rem);
+  font-weight: 900; line-height: 1.1; margin-bottom: 3rem;
+}
+@media (min-width: 768px) { .section-headline { margin-bottom: 4rem; } }
+
+/* ── Animations ── */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+@keyframes pulseLine { 0%,100% { opacity:.3; } 50% { opacity:1; } }
+@keyframes blink    { 0%,100% { opacity:1; } 50% { opacity:0; } }
+@keyframes burstAnim {
+  0%   { transform:translate(0,0) scale(1); opacity:1; }
+  100% { transform:translate(var(--dx),var(--dy)) scale(0); opacity:0; }
+}
+
+.revealEl { opacity: 0; transform: translateY(24px); }
+.revealEl.visible { animation: fadeUp 0.65s ease forwards; }
+
+/* ── Respect reduced-motion preferences ── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .revealEl { opacity: 1; transform: none; }
+}
