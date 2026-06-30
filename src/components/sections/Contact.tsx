@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { SITE } from "@/lib/data";
 
 export default function Contact() {
-  const [sent, setSent] = useState(false);
-  const [form, setForm] = useState({ name:"", email:"", msg:"" });
+  const [sent, setSent]       = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError]     = useState("");
+  const [form, setForm]       = useState({ name:"", email:"", msg:"" });
 
   useEffect(() => {
     const obs = new IntersectionObserver(entries => {
@@ -22,13 +24,30 @@ export default function Contact() {
     return () => obs.disconnect();
   }, []);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.msg) return;
-    const subject = encodeURIComponent(`Portfolio contact from ${form.name}`);
-    const body = encodeURIComponent(`${form.msg}\n\n— ${form.name} (${form.email})`);
-    window.location.href = `mailto:${SITE.email}?subject=${subject}&body=${body}`;
-    setSent(true);
+    if (!form.name || !form.email || !form.msg || sending) return;
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${SITE.email}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.msg,
+          _subject: `Portfolio contact from ${form.name}`,
+          _template: "table",
+        }),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      setSent(true);
+    } catch {
+      setError("Couldn't send — please email me directly at " + SITE.email);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -85,7 +104,12 @@ export default function Contact() {
                   )}
                 </div>
               ))}
-              <button type="submit" data-hover style={btnStyle}>SEND MESSAGE</button>
+              <button type="submit" data-hover disabled={sending} style={{ ...btnStyle, opacity: sending ? 0.6 : 1, cursor: sending ? "wait" : "pointer" }}>
+                {sending ? "SENDING…" : "SEND MESSAGE"}
+              </button>
+              {error && (
+                <p style={{ marginTop:".9rem", fontFamily:"Space Mono,monospace", fontSize:".68rem", color:"var(--ember)", lineHeight:1.6 }}>{error}</p>
+              )}
             </form>
           )}
           <style>{`
