@@ -13,7 +13,7 @@ export const SITE = {
   phone: "+20 1552694437",
   linkedin: "https://linkedin.com/in/amar-yasser13",
   resume: "/Amar-Yasser-Resume.pdf",
-  url: "https://ammar-portfolio.vercel.app",
+  url: "https://ammar-portfolio-inky.vercel.app",
 };
 
 export const TYPEWRITER_PHRASES = [
